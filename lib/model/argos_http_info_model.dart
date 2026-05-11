@@ -64,6 +64,7 @@ class ArgosHttpInfo extends ArgosBaseModel {
   }
 
   @override
+  // ignore: overridden_fields
   ArgosCapability? type = ArgosCapability.network;
 }
 

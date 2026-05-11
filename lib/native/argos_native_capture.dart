@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:argos/argos_manager.dart';
 import 'package:argos/model/argos_http_info_model.dart';
 import 'package:argos/storage/argos_packet_storage.dart';
 
@@ -27,10 +28,10 @@ class ArgosNativeCapture {
     _enabled = true;
 
     _subscription = _eventChannel.receiveBroadcastStream().listen(
-      _onNativeEvent,
-      onError: (_) {},
-      cancelOnError: false,
-    );
+          _onNativeEvent,
+          onError: (_) {},
+          cancelOnError: false,
+        );
 
     try {
       await _methodChannel.invokeMethod<void>('enable');
@@ -38,11 +39,15 @@ class ArgosNativeCapture {
   }
 
   void _onNativeEvent(dynamic event) {
+    if (!ArgosManager.instance.captureEnabled) return;
     if (event is! String) return;
     try {
       final map = jsonDecode(event) as Map<String, dynamic>;
       final record = ArgosPacketRecord.fromJson(map);
-      ArgosPacketStorage.instance.appendRecord(record);
+      ArgosPacketStorage.instance.appendRecord(
+        record,
+        maxRecords: ArgosManager.instance.config?.maxPacketRecords ?? 200,
+      );
     } catch (_) {}
   }
 

@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:mmkv/mmkv.dart';
 import 'package:argos/argos.dart';
 
 import 'package:argos_example/list_example.dart';
+import 'package:argos_example/mmkv_storage_adapter.dart';
+import 'package:argos_example/native_demo_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
   await MMKV.initialize();
 
-  Future.delayed(const Duration(milliseconds: 500)).then(
-    (_) => ArgosManager.instance.init(
+  Future.delayed(const Duration(milliseconds: 500)).then((_) {
+    ArgosManager.instance.init(
       config: ArgosConfig(
         apmTypes: [ArgosCapability.network],
         enableStorage: true,
         maxPacketRecords: 200,
+        storageAdapter: MmkvStorageAdapter(),
       ),
       listener: (ArgosBaseModel? model) {
         debugPrint(model?.getValue());
       },
-    ),
-  );
+    );
+    ArgosNativeCapture.instance.enable();
+  });
 
   runApp(const MyApp());
 }
@@ -61,6 +67,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/listPage': (context) => const ListExamplePage(),
         '/packets': (context) => const ArgosPacketListPage(),
+        '/nativeDemo': (context) => const NativeCaptureDemoPage(),
         '/': (context) => const MyHomePage(),
       },
       initialRoute: '/',
@@ -89,6 +96,11 @@ class MyHomePage extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/packets'),
               child: const Text('查看抓包记录'),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/nativeDemo'),
+              child: const Text('原生抓包 demo'),
             ),
           ],
         ),

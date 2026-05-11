@@ -15,5 +15,6 @@ class ArgosFpsInfo extends ArgosBaseModel {
   }
 
   @override
+  // ignore: overridden_fields
   ArgosCapability? type = ArgosCapability.fps;
 }

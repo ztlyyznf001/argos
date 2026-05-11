@@ -60,7 +60,7 @@ class ArgosOkHttpInterceptor : Interceptor {
         val responseBody = try {
             if (isTextMediaType(contentType)) {
                 val source = response.peekBody(100 * 1024)
-                source.string(Charsets.UTF_8)
+                source.string()
             } else ""
         } catch (_: Exception) { "" }
 
