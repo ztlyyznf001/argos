@@ -58,26 +58,51 @@ Before invoking `flutter pub publish`, the maintainer MUST run, in order, and re
 
 ### Requirement: Publish ordering
 
-The release operation SHALL execute steps in the following order, with each step completing successfully before the next is attempted:
+The release MAY proceed in one of two modes. In both modes, steps SHALL execute in order with each step completing successfully before the next.
+
+**Mode A — Full publish (pub.dev + GitHub):**
 
 1. Commit the version bump and CHANGELOG update onto the release branch.
 2. Merge to `main` (or commit directly to `main` if maintainer policy allows).
-3. Run pre-publish verification (see above).
+3. Run pre-publish verification.
 4. `flutter pub publish` and confirm interactively.
 5. `git tag v<version>` on the merged commit and `git push origin v<version>`.
 6. `gh release create v<version>` referencing the CHANGELOG section.
 
-The tag MUST NOT be pushed before `flutter pub publish` succeeds, because pub.dev is the irreversible step and tagging a commit whose publish failed creates downstream confusion about which version is live.
+In Mode A the tag MUST NOT be pushed before `flutter pub publish` succeeds, because pub.dev is the irreversible step and tagging a commit whose publish failed creates downstream confusion about which version is live.
 
-#### Scenario: Publish fails, tag not yet pushed
+**Mode B — GitHub-only first, pub.dev deferred:**
 
-- **WHEN** `flutter pub publish` reports an error and the maintainer has not yet pushed the tag
+1. Commit + merge as in Mode A steps 1–2.
+2. Run pre-publish verification.
+3. `git tag v<version>` and `git push origin v<version>`.
+4. `gh release create v<version>` referencing the CHANGELOG section, and the Release body MUST explicitly state that pub.dev publishing is deferred so downstream consumers are not surprised.
+5. *(Deferred)* When the maintainer later runs `flutter pub publish` for the same `<version>`:
+   - The pubspec `version:` on the tagged commit MUST still equal `<version>`.
+   - Pre-publish verification MUST be re-run on the tagged commit.
+   - If any source change has happened between the tag and the deferred publish, the maintainer MUST cut a new patch version instead of publishing the original tag's content.
+
+Mode B is appropriate when the maintainer wants the release artifact (tag + GitHub Release) cut immediately but is deferring pub.dev publish (e.g., waiting on credentials, validating with downstream consumers first, or deliberately not publishing to pub.dev for that version).
+
+#### Scenario: Mode A — publish fails, tag not yet pushed
+
+- **WHEN** `flutter pub publish` reports an error in Mode A and the maintainer has not yet pushed the tag
 - **THEN** the maintainer SHALL fix the underlying issue, create a new commit, and restart the publish sequence from step 3 without rolling back any branch state
 
-#### Scenario: Publish succeeds, tag and Release follow
+#### Scenario: Mode A — publish succeeds, tag and Release follow
 
 - **WHEN** `flutter pub publish` reports `Package <name> <version> uploaded`
 - **THEN** the maintainer SHALL within the same working session push the matching `v<version>` git tag and create the GitHub Release
+
+#### Scenario: Mode B — deferred publish, source unchanged
+
+- **WHEN** the maintainer runs `flutter pub publish` against the Mode B tag commit and `git diff v<version>..HEAD -- pubspec.yaml lib/` reports no changes
+- **THEN** publish MAY proceed under the original `v<version>` tag without re-tagging
+
+#### Scenario: Mode B — deferred publish, source has drifted
+
+- **WHEN** the maintainer is ready to run `flutter pub publish` and the working tree contains changes to `pubspec.yaml` or `lib/` since `v<version>` was tagged
+- **THEN** publish MUST NOT use the existing `v<version>` and MUST instead cut a new patch version (e.g., `v<version+1>`) with its own commit, tag, and CHANGELOG entry
 
 ### Requirement: GitHub Release body format
 
