@@ -32,8 +32,7 @@ class ArgosPacketDetailPage extends StatelessWidget {
           title: Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
                   color: methodColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
@@ -155,7 +154,10 @@ class _RequestTab extends StatelessWidget {
         if (record.requestHeaders.isNotEmpty)
           _HeaderSection(title: '请求头', headers: record.requestHeaders),
         if (record.requestBody.isNotEmpty)
-          _BodySection(title: '请求体', body: record.requestBody, headers: record.requestHeaders),
+          _BodySection(
+              title: '请求体',
+              body: record.requestBody,
+              headers: record.requestHeaders),
       ],
     );
   }
@@ -432,12 +434,10 @@ class _InfoRow extends StatelessWidget {
           SizedBox(
             width: 60,
             child: Text(label,
-                style:
-                    const TextStyle(color: Colors.grey, fontSize: 12)),
+                style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ),
           Expanded(
-            child: SelectableText(value,
-                style: const TextStyle(fontSize: 12)),
+            child: SelectableText(value, style: const TextStyle(fontSize: 12)),
           ),
         ],
       ),
@@ -455,8 +455,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
         title,
-        style:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
   }

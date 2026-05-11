@@ -20,8 +20,8 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
     return _allRecords.where((r) {
       final urlMatch = _searchQuery.isEmpty ||
           r.uri.toLowerCase().contains(_searchQuery.toLowerCase());
-      final methodMatch = _selectedMethod == 'ALL' ||
-          r.method.toUpperCase() == _selectedMethod;
+      final methodMatch =
+          _selectedMethod == 'ALL' || r.method.toUpperCase() == _selectedMethod;
       return urlMatch && methodMatch;
     }).toList();
   }
@@ -119,7 +119,9 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
         actions: [
           IconButton(
             icon: Icon(
-              _captureEnabled ? Icons.pause_circle_outline : Icons.fiber_manual_record,
+              _captureEnabled
+                  ? Icons.pause_circle_outline
+                  : Icons.fiber_manual_record,
               color: _captureEnabled ? Colors.white : Colors.redAccent,
             ),
             tooltip: _captureEnabled ? '暂停抓包' : '开始抓包',
@@ -147,7 +149,8 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
                 isDense: true,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                prefixIcon: const Icon(Icons.search, size: 18, color: Colors.white70),
+                prefixIcon:
+                    const Icon(Icons.search, size: 18, color: Colors.white70),
                 hintStyle: const TextStyle(color: Colors.white54, fontSize: 13),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -170,8 +173,7 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
             height: 40,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               itemCount: _methods.length,
               separatorBuilder: (_, __) => const SizedBox(width: 6),
               itemBuilder: (_, i) {
@@ -180,8 +182,7 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
                 return ChoiceChip(
                   label: Text(m,
                       style: TextStyle(
-                          fontSize: 11,
-                          color: selected ? Colors.white : null)),
+                          fontSize: 11, color: selected ? Colors.white : null)),
                   selected: selected,
                   onSelected: (_) => setState(() => _selectedMethod = m),
                   selectedColor: Theme.of(context).primaryColor,
@@ -201,8 +202,7 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
                         Icon(Icons.wifi_off, size: 48, color: Colors.grey),
                         SizedBox(height: 12),
                         Text('暂无抓包记录',
-                            style:
-                                TextStyle(color: Colors.grey, fontSize: 15)),
+                            style: TextStyle(color: Colors.grey, fontSize: 15)),
                       ],
                     ),
                   )
@@ -292,8 +292,8 @@ class _RouteGroupTileState extends State<_RouteGroupTile> {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 11),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
                   child: Row(
                     children: [
                       Icon(
@@ -347,8 +347,7 @@ class _RouteGroupTileState extends State<_RouteGroupTile> {
 }
 
 class _PacketListItem extends StatelessWidget {
-  const _PacketListItem(
-      {Key? key, required this.record, required this.onTap})
+  const _PacketListItem({Key? key, required this.record, required this.onTap})
       : super(key: key);
 
   final ArgosPacketRecord record;
@@ -399,8 +398,7 @@ class _PacketListItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       _formatTime(record.startTimestamp),
-                      style:
-                          const TextStyle(fontSize: 11, color: Colors.grey),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -430,8 +428,7 @@ class _PacketListItem extends StatelessWidget {
                   Text(
                     '${record.durationMs} ms',
                     style: TextStyle(
-                        fontSize: 11,
-                        color: _durationColor(record.durationMs)),
+                        fontSize: 11, color: _durationColor(record.durationMs)),
                   ),
                 ],
               ),

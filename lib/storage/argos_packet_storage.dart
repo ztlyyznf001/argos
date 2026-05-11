@@ -22,7 +22,8 @@ class ArgosPacketStorage {
   }
 
   /// Append a captured HTTP record. Trims oldest entries when [maxRecords] exceeded.
-  void append(ArgosHttpInfo info, {int maxRecords = 200, String routeName = ''}) {
+  void append(ArgosHttpInfo info,
+      {int maxRecords = 200, String routeName = ''}) {
     final json = info.toJson();
     json['routeName'] = routeName;
     final record = ArgosPacketRecord.fromJson(json);
