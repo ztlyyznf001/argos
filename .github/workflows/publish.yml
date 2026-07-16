@@ -1,0 +1,71 @@
+name: Publish to pub.dev
+
+# Mode C (automated publish via CI) of the release-process spec.
+# Pushing a vX.Y.Z tag runs the pre-publish verification gate and, only on
+# green, publishes to pub.dev using OIDC-based automated publishing.
+#
+# Prerequisite (one-time, maintainer, pub.dev UI): enable "Automated
+# publishing" for the `argos` package, set the GitHub repository to
+# ztlyyznf001/argos and the allowed tag pattern to `v{{version}}`. Until this
+# is done the publish step fails at authentication.
+on:
+  push:
+    tags:
+      # Match version tags like v0.3.0 — kept in sync with the pub.dev
+      # automated-publishing tag pattern `v{{version}}`.
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Tag to publish (e.g. v0.3.0). Required for manual runs.'
+        required: true
+
+# OIDC token exchange requires id-token: write; no PUB_CREDENTIALS secret is used.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4.2.2
+        with:
+          # Tag push -> refs/tags/vX.Y.Z; manual dispatch -> the provided tag.
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Set up Flutter (stable)
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          channel: stable
+
+      - name: Guard — tag must match pubspec version
+        run: |
+          set -euo pipefail
+          TARGET_REF="${{ github.event.inputs.ref || github.ref_name }}"
+          TAG_VERSION="${TARGET_REF#v}"
+          PUBSPEC_VERSION="$(grep -E '^version:' pubspec.yaml | head -n1 | sed -E 's/^version:[[:space:]]*//')"
+          echo "tag=$TARGET_REF tag_version=$TAG_VERSION pubspec_version=$PUBSPEC_VERSION"
+          if [ "$TAG_VERSION" != "$PUBSPEC_VERSION" ]; then
+            echo "::error::Tag ($TAG_VERSION) does not match pubspec version ($PUBSPEC_VERSION); refusing to publish."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Format check
+        run: dart format --set-exit-if-changed .
+
+      - name: Test
+        run: flutter test
+
+      - name: Publish dry-run
+        run: flutter pub publish --dry-run
+
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
