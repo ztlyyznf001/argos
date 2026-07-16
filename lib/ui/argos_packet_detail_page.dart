@@ -223,8 +223,9 @@ class _JankView extends StatelessWidget {
     final map = <String, String>{};
     for (final line in record.responseBody.split('\n')) {
       final i = line.indexOf('=');
-      if (i > 0)
+      if (i > 0) {
         map[line.substring(0, i).trim()] = line.substring(i + 1).trim();
+      }
     }
     return map;
   }

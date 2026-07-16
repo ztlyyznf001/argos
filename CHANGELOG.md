@@ -1,3 +1,11 @@
+## 0.3.1
+
+First version published to pub.dev. `0.3.0` was tagged on GitHub but never published; `0.3.1` is functionally identical plus the lint fix below.
+
+### Fixed
+
+- Add braces to a single-statement `if` in `ArgosPacketDetailPage._parseFormBody` that `dart format` had wrapped across two lines, which tripped the `curly_braces_in_flow_control_structures` lint and made `flutter analyze` exit non-zero. No behavioural change.
+
 ## 0.3.0
 
 This release bundles four changes landed since `0.2.0`, expanding Argos from "network + basic FPS" into a four-signal APM tool (network, crash, jank, resource) with an event-type-aware Inspector and a hardened storage layer.
