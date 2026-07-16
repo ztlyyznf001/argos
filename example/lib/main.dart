@@ -8,6 +8,7 @@ import 'package:argos/argos.dart';
 import 'package:argos_example/list_example.dart';
 import 'package:argos_example/mmkv_storage_adapter.dart';
 import 'package:argos_example/native_demo_page.dart';
+import 'package:argos_example/apm_demo_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,12 @@ void main() async {
   Future.delayed(const Duration(milliseconds: 500)).then((_) {
     ArgosManager.instance.init(
       config: ArgosConfig(
-        apmTypes: [ArgosCapability.network],
+        apmTypes: [
+          ArgosCapability.network,
+          ArgosCapability.crash,
+          ArgosCapability.jank,
+          ArgosCapability.resource,
+        ],
         enableStorage: true,
         maxPacketRecords: 200,
         storageAdapter: MmkvStorageAdapter(),
@@ -68,6 +74,7 @@ class _MyAppState extends State<MyApp> {
         '/listPage': (context) => const ListExamplePage(),
         '/packets': (context) => const ArgosPacketListPage(),
         '/nativeDemo': (context) => const NativeCaptureDemoPage(),
+        '/apmDemo': (context) => const ApmDemoPage(),
         '/': (context) => const MyHomePage(),
       },
       initialRoute: '/',
@@ -101,6 +108,11 @@ class MyHomePage extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/nativeDemo'),
               child: const Text('原生抓包 demo'),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/apmDemo'),
+              child: const Text('APM demo (崩溃/卡顿/资源)'),
             ),
           ],
         ),

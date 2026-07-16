@@ -47,6 +47,8 @@ class ArgosNativeCapture {
       ArgosPacketStorage.instance.appendRecord(
         record,
         maxRecords: ArgosManager.instance.config?.maxPacketRecords ?? 200,
+        resourceMaxRecords:
+            ArgosManager.instance.config?.resourceMaxRecords ?? 50,
       );
     } catch (_) {}
   }

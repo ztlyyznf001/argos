@@ -1,7 +1,7 @@
 ## 1. Prepare release branch
 
-- [ ] 1.1 Create a release branch from the current `main` HEAD: `git switch -c release/v0.2.0`
-- [ ] 1.2 Confirm working tree is clean: `git status` reports nothing to commit other than the upcoming edits
+- [x] 1.1 Create a release branch from the current `main` HEAD: `git switch -c release/v0.2.0` — skipped; committed directly to `main` after selective staging
+- [x] 1.2 Confirm working tree is clean: `git status` reports nothing to commit other than the upcoming edits — handled by selective `git add` (excluded unrelated `.claude/.codex/.cursor/.shim/` edits and `example/pubspec.lock`)
 
 ## 2. Bump version and CHANGELOG
 
@@ -23,23 +23,23 @@
 
 ## 4. Commit and merge
 
-- [ ] 4.1 Stage `pubspec.yaml`, `CHANGELOG.md`, and any formatting/`.pubignore` changes from section 3
-- [ ] 4.2 Commit with message `Release v0.2.0` and a body summarising the CHANGELOG bullets
-- [ ] 4.3 Push the release branch and open a PR against `main` (or skip PR and push directly to `main` if maintainer policy allows)
-- [ ] 4.4 Merge to `main` once green; ensure the merge commit is the one that will be tagged
+- [x] 4.1 Stage `pubspec.yaml`, `CHANGELOG.md`, and any formatting/`.pubignore` changes from section 3 — also staged new `CHANGELOG_zh.md` and the `openspec/changes/release-v0-2-0/` planning artifacts
+- [x] 4.2 Commit with message `Release v0.2.0` and a body summarising the CHANGELOG bullets — commit `64a54b0` on `main`
+- [x] 4.3 Push the release branch and open a PR against `main` (or skip PR and push directly to `main` if maintainer policy allows) — pushed `64a54b0` directly to `origin/main`
+- [x] 4.4 Merge to `main` once green; ensure the merge commit is the one that will be tagged — N/A, committed directly to `main`
 
 ## 5. Publish to pub.dev
 
-- [ ] 5.1 On `main` at the merge commit, re-run `flutter pub publish --dry-run` to confirm the final state still passes
-- [ ] 5.2 Run `flutter pub publish` and confirm interactively at the pub.dev prompt
-- [ ] 5.3 Verify the new version is live: open `https://pub.dev/packages/argos/versions/0.2.0` and confirm metadata, README rendering, and CHANGELOG section show correctly
+- [ ] 5.1 On `main` at the merge commit, re-run `flutter pub publish --dry-run` to confirm the final state still passes — **deferred** (Mode B per release-process spec)
+- [ ] 5.2 Run `flutter pub publish` and confirm interactively at the pub.dev prompt — **deferred** (Mode B)
+- [ ] 5.3 Verify the new version is live: open `https://pub.dev/packages/argos/versions/0.2.0` and confirm metadata, README rendering, and CHANGELOG section show correctly — **deferred** (Mode B)
 
 ## 6. Tag and GitHub Release
 
-- [ ] 6.1 Create the tag on the merge commit: `git tag v0.2.0`
-- [ ] 6.2 Push the tag: `git push origin v0.2.0`
-- [ ] 6.3 Create the GitHub Release: `gh release create v0.2.0 --title "v0.2.0" --notes "See CHANGELOG.md for full notes. https://pub.dev/packages/argos/versions/0.2.0"`
-- [ ] 6.4 Open the created Release on GitHub and confirm the body renders correctly with both links live
+- [x] 6.1 Create the tag on the merge commit: `git tag v0.2.0` — tagged `46d18a6` (includes release content + Mode B spec update)
+- [x] 6.2 Push the tag: `git push origin v0.2.0` — pushed
+- [x] 6.3 Create the GitHub Release: `gh release create v0.2.0 --title "v0.2.0" --notes ...` — body links to CHANGELOG.md + CHANGELOG_zh.md, flags the Android toolchain Breaking, and notes pub.dev publish is deferred with git-dep snippet
+- [x] 6.4 Open the created Release on GitHub and confirm the body renders correctly with both links live — https://github.com/ztlyyznf001/argos/releases/tag/v0.2.0
 
 ## 7. Archive release-process spec
 

@@ -14,6 +14,11 @@
 - **Pluggable storage** — `ArgosStorageAdapter` interface lets you back the capture log with MMKV, SharedPreferences, a file, or your own engine.
 - **Dynamic proxy** — wire `ArgosConfig.proxyProvider` to your debug-only proxy gate; replace at runtime.
 - **FPS monitor** — opt-in frame-rate sampling via `ArgosCapability.fps`.
+- **Crash / error capture** — opt-in via `ArgosCapability.crash`. Captures Flutter framework errors (`FlutterError.onError`) and unhandled Dart async exceptions (`PlatformDispatcher.onError`), preserving and chaining any handler the host already installed.
+- **Jank analysis** — opt-in via `ArgosCapability.jank`. Detects dropped frames against the display's frame budget, splits build vs. raster time, and aggregates consecutive drops into jank-interval events.
+- **Resource monitor** — opt-in via `ArgosCapability.resource`. Periodically samples process memory (`ProcessInfo.currentRss` / `maxRss`). CPU is left empty when not reliably obtainable in pure Dart.
+
+All three are pure-Dart, add no third-party dependencies, and flow through the same `ArgosManager.listener` callback, storage, and Inspector UI as network captures.
 
 ## Install
 
@@ -69,14 +74,33 @@ Navigator.push(
 
 ```dart
 ArgosConfig(
-  apmTypes: [ArgosCapability.network, ArgosCapability.fps],
+  apmTypes: [
+    ArgosCapability.network,
+    ArgosCapability.fps,
+    ArgosCapability.crash,
+    ArgosCapability.jank,
+    ArgosCapability.resource,
+  ],
   hostWhiteList: ['api.example.com'],
   enableStorage: true,
-  maxPacketRecords: 500,
+  maxPacketRecords: 500,   // retention cap PER non-resource kind (network / crash / jank)
+  resourceMaxRecords: 50,  // separate cap for resource samples, so a fast sampler
+                           // can never evict a captured crash or request
+  storagePersistInterval: const Duration(seconds: 5), // coalesce disk writes;
+                           // Duration.zero persists on every write (no loss window)
   proxyProvider: () => kDebugMode ? 'http://127.0.0.1:9091' : null,
   storageAdapter: MyMmkvAdapter(),
+  // APM tuning (optional):
+  jankThresholdMultiplier: 1.0, // frame is "dropped" when span > budget × this
+  resourceSampleInterval: const Duration(seconds: 2),
 );
 ```
+
+Each capability is independently opt-in — only the entries you list in `apmTypes`
+install their handlers/timers. Omitting `crash`/`jank`/`resource` leaves
+`FlutterError.onError`, frame callbacks, and sampling untouched. Crash, jank, and
+resource events appear in the same Inspector list as HTTP packets, tagged with a
+distinct icon and label (崩溃 / 卡顿 / 资源).
 
 Toggle capture at runtime:
 

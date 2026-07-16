@@ -92,6 +92,7 @@ void _dispatchHttpInfo(ArgosHttpInfo? info) {
     ArgosPacketStorage.instance.append(
       info,
       maxRecords: manager.config?.maxPacketRecords ?? 200,
+      resourceMaxRecords: manager.config?.resourceMaxRecords ?? 50,
       routeName: manager.currentRoute,
     );
   }

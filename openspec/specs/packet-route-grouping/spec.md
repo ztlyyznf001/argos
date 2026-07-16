@@ -1,4 +1,10 @@
-## ADDED Requirements
+# packet-route-grouping Specification
+
+## Purpose
+
+定义列表页按路由（`routeName`）对抓包记录分组展示的行为，包括分组的展开/折叠形式、与搜索及 Method 过滤的联动关系，以及空路由名的归类方式。
+
+## Requirements
 
 ### Requirement: 路由分组展开列表
 `ArgosPacketListPage` SHALL 将抓包记录按 `routeName` 分组，以可展开/折叠的 `ExpansionTile` 列表形式展示。每个分组标题显示路由名称和该分组的记录条数，默认全部展开。空字符串 `routeName` 归入"未知页面"分组。

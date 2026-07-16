@@ -1,3 +1,11 @@
+# dynamic-proxy-provider Specification
+
+## Purpose
+
+定义通过 `proxyProvider` 回调动态提供代理地址的能力：回调的调用时机与实时性、经 `ArgosConfig` 注入与运行时替换的方式，以及静态代理设置方法的移除。
+
+## Requirements
+
 ### Requirement: 通过回调动态提供代理地址
 系统 SHALL 支持调用方通过 `String? Function()?` 类型的 `proxyProvider` 回调来动态提供代理地址。每次 HTTP 请求建立连接前，系统 MUST 调用该回调以获取当前代理地址，而非使用缓存值。
 

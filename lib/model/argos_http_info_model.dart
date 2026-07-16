@@ -126,6 +126,10 @@ class ArgosPacketRecord {
   final String? error;
   final String routeName;
 
+  /// Event kind: `network` (HTTP packet), `crash`, `jank`, or `resource`.
+  /// Used by the Inspector UI to render differentiated list items.
+  final String kind;
+
   ArgosPacketRecord({
     required this.id,
     required this.uri,
@@ -140,6 +144,7 @@ class ArgosPacketRecord {
     required this.responseSize,
     this.error,
     this.routeName = '',
+    this.kind = 'network',
   });
 
   factory ArgosPacketRecord.fromHttpInfo(ArgosHttpInfo info) {
@@ -162,6 +167,7 @@ class ArgosPacketRecord {
       responseSize: json['responseSize'] as int? ?? 0,
       error: json['error'] as String?,
       routeName: json['routeName'] as String? ?? '',
+      kind: json['kind'] as String? ?? 'network',
     );
   }
 
@@ -180,6 +186,7 @@ class ArgosPacketRecord {
       'responseSize': responseSize,
       'error': error,
       'routeName': routeName,
+      'kind': kind,
     };
   }
 

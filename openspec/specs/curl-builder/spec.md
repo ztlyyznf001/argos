@@ -1,4 +1,10 @@
-## ADDED Requirements
+# curl-builder Specification
+
+## Purpose
+
+定义将一条抓包记录转换为可直接执行的 cURL 命令时的生成规则，涵盖命令各部分的顺序、请求头与请求体的格式化、以及 `--compressed`、`--proxy` 等可选参数的取舍。
+
+## Requirements
 
 ### Requirement: cURL 命令基本结构
 系统 SHALL 按照以下顺序生成 cURL 命令：URL（首位）→ HTTP 方法（可选）→ 请求头 → `--compressed`（可选）→ 请求体（可选）→ `--proxy`（可选，末位）。

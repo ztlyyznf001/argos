@@ -1,4 +1,10 @@
-## ADDED Requirements
+# http-capture-pipeline Specification
+
+## Purpose
+
+定义 HTTP 抓包主链路的行为：如何通过 `HttpOverrides` 拦截全部请求、如何完整记录请求耗时与错误、如何处理非文本响应与重复上报，以及运行时抓包开关的作用范围。
+
+## Requirements
 
 ### Requirement: HttpOverrides 正确包装为 ArgosHttpClient
 系统 SHALL 在 `ArgosHttpOverrides.createHttpClient()` 中将底层 `HttpClient` 包装为 `ArgosHttpClient`，使所有 HTTP 请求都经过监控拦截链路。
