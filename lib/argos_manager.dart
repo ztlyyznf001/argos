@@ -5,15 +5,15 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'package:argos/apm/argos_fps_monitor.dart';
-import 'package:argos/apm/argos_http_monitor.dart';
-import 'package:argos/apm/argos_crash_monitor.dart';
-import 'package:argos/apm/argos_jank_monitor.dart';
-import 'package:argos/apm/argos_resource_monitor.dart';
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/model/argos_model.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/storage/argos_packet_storage.dart';
+import 'package:argos_inspector/apm/argos_fps_monitor.dart';
+import 'package:argos_inspector/apm/argos_http_monitor.dart';
+import 'package:argos_inspector/apm/argos_crash_monitor.dart';
+import 'package:argos_inspector/apm/argos_jank_monitor.dart';
+import 'package:argos_inspector/apm/argos_resource_monitor.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/storage/argos_packet_storage.dart';
 
 class ArgosManager {
   Function(ArgosBaseModel?)? listener;

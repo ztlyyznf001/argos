@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/model/argos_model.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/model/argos_model.dart';
 
 const int _kMaxBodyBytes = 100 * 1024; // 100 KB
 

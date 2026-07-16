@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 /// Top-level event-type filter. This is the primary axis: HTTP method is only
 /// meaningful once you've narrowed to network records, so it hangs off this.

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:argos/model/argos_http_info_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
 
 class ArgosCurlBuilder {
   /// Converts a [ArgosPacketRecord] into an equivalent cURL command string.

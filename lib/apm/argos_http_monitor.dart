@@ -4,12 +4,12 @@ import 'dart:io';
 
 import 'dart:typed_data';
 
-import 'package:argos/apm/argos_base_monitor.dart';
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/argos_manager.dart';
-import 'package:argos/model/argos_model.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/storage/argos_packet_storage.dart';
+import 'package:argos_inspector/apm/argos_base_monitor.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/argos_manager.dart';
+import 'package:argos_inspector/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/storage/argos_packet_storage.dart';
 
 class ArgosHttpMonitor implements ArgosBaseMonitor {
   ArgosConfig? config;

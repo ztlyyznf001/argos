@@ -1,5 +1,5 @@
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/model/argos_model.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/model/argos_model.dart';
 
 class ArgosFpsInfo extends ArgosBaseModel {
   ArgosFpsInfo(this.fpsValue)

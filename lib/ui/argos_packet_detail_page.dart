@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/ui/argos_curl_builder.dart';
-import 'package:argos/ui/argos_ui_kit.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/ui/argos_curl_builder.dart';
+import 'package:argos_inspector/ui/argos_ui_kit.dart';
 
 /// Dispatches to a view matching the record's kind.
 ///

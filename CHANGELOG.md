@@ -1,6 +1,10 @@
 ## 0.3.1
 
-First version published to pub.dev. `0.3.0` was tagged on GitHub but never published; `0.3.1` is functionally identical plus the lint fix below.
+First version published to pub.dev, under the package name **`argos_inspector`** (the name `argos` was rejected by pub.dev as too similar to the existing `argo` package). `0.3.0` was tagged on GitHub under the old `argos` name but never published; `0.3.1` is functionally identical plus the package rename and lint fix below.
+
+### Changed
+
+- **Package renamed `argos` → `argos_inspector`** for pub.dev. Imports are now `package:argos_inspector/argos_inspector.dart`; the dependency is `argos_inspector: ^0.3.1`. All public class/API names (`ArgosManager`, `ArgosConfig`, `ArgosCapability`, etc.) are unchanged — only the package/import name changed. The GitHub repository remains `ztlyyznf001/argos`.
 
 ### Fixed
 

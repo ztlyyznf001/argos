@@ -24,13 +24,13 @@
 
 ```yaml
 dependencies:
-  argos: ^0.1.0
+  argos_inspector: ^0.3.1
 ```
 
 ## 快速上手
 
 ```dart
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

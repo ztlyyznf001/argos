@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:argos/apm/argos_base_monitor.dart';
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/argos_manager.dart';
-import 'package:argos/model/argos_model.dart';
-import 'package:argos/model/argos_crash_info_model.dart';
+import 'package:argos_inspector/apm/argos_base_monitor.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/argos_manager.dart';
+import 'package:argos_inspector/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_crash_info_model.dart';
 
 /// Captures Flutter framework errors ([FlutterError.onError]) and unhandled
 /// Dart asynchronous exceptions ([PlatformDispatcher.onError]), routing them

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:argos/model/argos_http_info_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
 
 /// Record kinds carried by [ArgosPacketRecord.kind].
 abstract class ArgosKind {

@@ -21,7 +21,7 @@ dependencies:
   mmkv: ^2.0.0
   dio: ^5.0.0
 
-  argos:
+  argos_inspector:
     # When depending on this package from a real application you should use:
     #   argos: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints

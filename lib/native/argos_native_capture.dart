@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:argos/argos_manager.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/storage/argos_packet_storage.dart';
+import 'package:argos_inspector/argos_manager.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/storage/argos_packet_storage.dart';
 
 class ArgosNativeCapture {
   ArgosNativeCapture._internal();

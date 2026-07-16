@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 /// In-memory adapter so the real list page can be pumped against seeded data.
 class _FakeAdapter implements ArgosStorageAdapter {

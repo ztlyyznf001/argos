@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/ui/argos_ui_kit.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/ui/argos_ui_kit.dart';
 
 ArgosPacketRecord _resource(int ts, int rssBytes, {int? maxRss}) {
   return ArgosPacketRecord(

@@ -23,7 +23,7 @@ in the repository.
 Before the pipeline can publish, the package owner must enable automated
 publishing on pub.dev:
 
-1. Go to <https://pub.dev/packages/argos/admin> (package admin).
+1. Go to <https://pub.dev/packages/argos_inspector/admin> (package admin).
 2. Under **Automated publishing**, enable **publishing from GitHub Actions**.
 3. Set **Repository** to `ztlyyznf001/argos`.
 4. Set the **Tag pattern** to `v{{version}}` (matches the workflow's
@@ -39,7 +39,7 @@ authentication; every other step still runs.
 2. Commit and merge to `main`.
 3. Tag and push: `git tag v<version> && git push origin v<version>`.
 4. The pipeline runs on the tag push. Confirm the run is green and
-   `<version>` is live at `https://pub.dev/packages/argos/versions/<version>`.
+   `<version>` is live at `https://pub.dev/packages/argos_inspector/versions/<version>`.
 5. Create the GitHub Release: `gh release create v<version>` with a body that
    points to the `CHANGELOG.md` section and the pub.dev version page (a pointer,
    not a copy of the notes).

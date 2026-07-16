@@ -5,7 +5,7 @@ name: Publish to pub.dev
 # green, publishes to pub.dev using OIDC-based automated publishing.
 #
 # Prerequisite (one-time, maintainer, pub.dev UI): enable "Automated
-# publishing" for the `argos` package, set the GitHub repository to
+# publishing" for the `argos_inspector` package, set the GitHub repository to
 # ztlyyznf001/argos and the allowed tag pattern to `v{{version}}`. Until this
 # is done the publish step fails at authentication.
 on:

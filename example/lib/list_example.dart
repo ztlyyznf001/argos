@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:argos/storage/argos_packet_storage.dart';
+import 'package:argos_inspector/storage/argos_packet_storage.dart';
 
 class ListExamplePage extends StatefulWidget {
   const ListExamplePage({Key? key}) : super(key: key);

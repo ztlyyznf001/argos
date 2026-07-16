@@ -1,4 +1,4 @@
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 import 'package:mmkv/mmkv.dart';
 
 class MmkvStorageAdapter implements ArgosStorageAdapter {

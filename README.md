@@ -24,13 +24,13 @@ All three are pure-Dart, add no third-party dependencies, and flow through the s
 
 ```yaml
 dependencies:
-  argos: ^0.1.0
+  argos_inspector: ^0.3.1
 ```
 
 ## Quick start
 
 ```dart
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

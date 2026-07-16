@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/ui/argos_packet_detail_page.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/ui/argos_packet_detail_page.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

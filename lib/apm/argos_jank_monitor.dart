@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/scheduler.dart';
 
-import 'package:argos/apm/argos_base_monitor.dart';
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/argos_manager.dart';
-import 'package:argos/model/argos_model.dart';
-import 'package:argos/model/argos_jank_info_model.dart';
+import 'package:argos_inspector/apm/argos_base_monitor.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/argos_manager.dart';
+import 'package:argos_inspector/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_jank_info_model.dart';
 
 /// Detects dropped frames via [FrameTiming], splits build/raster time, and
 /// aggregates consecutive dropped frames into a single jank-interval event,

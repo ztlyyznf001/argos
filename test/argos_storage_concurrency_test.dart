@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 /// In-memory adapter that counts read/write calls so coalescing and single-
 /// hydration can be asserted. `writeDelay` holds a write in-flight to exercise

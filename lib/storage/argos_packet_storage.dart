@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:argos/model/argos_http_info_model.dart';
-import 'package:argos/storage/argos_storage_adapter.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
+import 'package:argos_inspector/storage/argos_storage_adapter.dart';
 
 /// Persists captured records behind a single serialized operation queue with an
 /// in-memory cache as the source of truth.

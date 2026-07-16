@@ -1,4 +1,4 @@
-import 'package:argos/storage/argos_storage_adapter.dart';
+import 'package:argos_inspector/storage/argos_storage_adapter.dart';
 
 enum ArgosCapability {
   network,

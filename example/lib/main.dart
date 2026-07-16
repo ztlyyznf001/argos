@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:mmkv/mmkv.dart';
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 import 'package:argos_example/list_example.dart';
 import 'package:argos_example/mmkv_storage_adapter.dart';

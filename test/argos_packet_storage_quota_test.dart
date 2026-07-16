@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/argos.dart';
+import 'package:argos_inspector/argos_inspector.dart';
 
 /// In-memory adapter so the storage layer can be exercised without MMKV.
 class _FakeAdapter implements ArgosStorageAdapter {

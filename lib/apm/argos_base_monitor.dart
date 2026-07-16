@@ -1,4 +1,4 @@
-import 'package:argos/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_model.dart';
 
 class ArgosBaseMonitor {
   void onReport(ArgosBaseModel model) {}

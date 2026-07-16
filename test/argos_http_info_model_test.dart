@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:argos/model/argos_http_info_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
 
 class _FakeHttpHeaders implements HttpHeaders {
   @override

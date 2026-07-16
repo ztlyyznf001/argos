@@ -1,4 +1,4 @@
-import 'package:argos/config/argos_config.dart';
+import 'package:argos_inspector/config/argos_config.dart';
 
 class ArgosBaseModel {
   ArgosCapability? type;

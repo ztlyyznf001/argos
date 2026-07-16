@@ -1,6 +1,6 @@
-import 'package:argos/config/argos_config.dart';
-import 'package:argos/model/argos_model.dart';
-import 'package:argos/model/argos_http_info_model.dart';
+import 'package:argos_inspector/config/argos_config.dart';
+import 'package:argos_inspector/model/argos_model.dart';
+import 'package:argos_inspector/model/argos_http_info_model.dart';
 
 /// A captured Flutter framework error or unhandled Dart exception.
 class ArgosCrashInfo extends ArgosBaseModel {
