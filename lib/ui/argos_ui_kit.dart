@@ -177,7 +177,17 @@ List<ArgosListEntry> argosBuildListEntries(List<ArgosPacketRecord> records) {
       continue;
     }
     final run = <ArgosPacketRecord>[];
-    while (i < records.length && records[i].kind == ArgosKind.resource) {
+    final sessionId = records[i].sessionId;
+    while (i < records.length &&
+        records[i].kind == ArgosKind.resource &&
+        sessionId != null &&
+        records[i].sessionId == sessionId) {
+      run.add(records[i]);
+      i++;
+    }
+    if (run.isEmpty) {
+      // Legacy samples have no reliable session boundary and therefore stay
+      // independent instead of being folded into a possibly cross-run trend.
       run.add(records[i]);
       i++;
     }

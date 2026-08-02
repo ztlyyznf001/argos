@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -41,14 +42,14 @@ class ArgosCrashMonitor implements ArgosBaseMonitor {
 
     _previousFlutterOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      _recordFlutterError(details);
+      unawaited(_recordFlutterError(details));
       // Chain to whatever the host had configured (defaults to dumpErrorToConsole).
       _previousFlutterOnError?.call(details);
     };
 
     _previousPlatformOnError = PlatformDispatcher.instance.onError;
     PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-      _record(error.toString(), stack.toString(), null);
+      unawaited(_record(error.toString(), stack.toString(), null));
       // Preserve previous handling; return false so the platform still reports
       // it when no prior handler claimed it.
       return _previousPlatformOnError?.call(error, stack) ?? false;
@@ -57,18 +58,18 @@ class ArgosCrashMonitor implements ArgosBaseMonitor {
     return this;
   }
 
-  void _recordFlutterError(FlutterErrorDetails details) {
+  Future<void> _recordFlutterError(FlutterErrorDetails details) {
     final message = details.exceptionAsString();
     final stack = details.stack?.toString();
     final library = details.library;
-    _record(message, stack, library);
+    return _record(message, stack, library);
   }
 
-  void _record(String message, String? stack, String? library) {
+  Future<void> _record(String message, String? stack, String? library) {
     final key = '$message|${_firstStackLine(stack)}';
     final nowMs = DateTime.now().millisecondsSinceEpoch;
     if (key == _lastKey && (nowMs - _lastKeyTimeMs) < _dedupWindowMs) {
-      return; // duplicate across channels within the window
+      return Future<void>.value();
     }
     _lastKey = key;
     _lastKeyTimeMs = nowMs;
@@ -79,7 +80,23 @@ class ArgosCrashMonitor implements ArgosBaseMonitor {
       library: library,
       routeName: ArgosManager.instance.currentRoute,
     );
-    ArgosManager.instance.dispatch(info, record: info.toPacketRecord());
+    final manager = ArgosManager.instance;
+    final shouldFlush =
+        manager.captureEnabled && (manager.config?.enableStorage ?? false);
+    final append = manager.dispatch(info, record: info.toPacketRecord());
+    if (shouldFlush) {
+      return _flushAfterAppend(append);
+    }
+    return append;
+  }
+
+  Future<void> _flushAfterAppend(Future<void> append) async {
+    try {
+      await append;
+      await ArgosManager.instance.flush();
+    } catch (error) {
+      debugPrint('ArgosCrashMonitor flush error: $error');
+    }
   }
 
   String _firstStackLine(String? stack) {
@@ -92,4 +109,26 @@ class ArgosCrashMonitor implements ArgosBaseMonitor {
 
   @override
   void onReport(ArgosBaseModel model) {}
+
+  @visibleForTesting
+  Future<void> recordForTesting(
+    String message, {
+    String? stack,
+    String? library,
+  }) =>
+      _record(message, stack, library);
+
+  @visibleForTesting
+  void resetForTesting() {
+    if (_installed) {
+      FlutterError.onError = _previousFlutterOnError;
+      PlatformDispatcher.instance.onError = _previousPlatformOnError;
+    }
+    _installed = false;
+    _previousFlutterOnError = null;
+    _previousPlatformOnError = null;
+    _lastKey = null;
+    _lastKeyTimeMs = 0;
+    config = null;
+  }
 }

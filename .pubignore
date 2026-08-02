@@ -1,0 +1,45 @@
+# Local tools and repository-only workflow artifacts.
+.agents/
+.claude/
+.codex/
+.cursor/
+.github/
+.shim/
+.vscode/
+openspec/
+RELEASING.md
+
+# Tests remain in the source repository and are not needed by consumers.
+test/
+example/test/
+
+# Dart, Flutter, IDE, and platform-generated files.
+.DS_Store
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+build/
+**/build/
+*.iml
+.idea/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub/
+**/.pub-cache/
+**/Pods/
+**/.symlinks/
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Runner/GeneratedPluginRegistrant.*
+example/android/.gradle/
+example/android/local.properties
+example/android/gradlew
+example/android/gradlew.bat
+example/android/gradle/wrapper/gradle-wrapper.jar
+
+# iCloud/local conflict copies and duplicate directories.
+* 2*

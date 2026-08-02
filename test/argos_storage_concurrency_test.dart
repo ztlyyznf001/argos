@@ -29,8 +29,10 @@ class _CountingAdapter implements ArgosStorageAdapter {
   Future<void> clear(String key) async => _store.remove(key);
 
   List<dynamic> get stored {
-    final raw = _store['argos_packet_records'];
-    return raw == null ? const [] : jsonDecode(raw) as List<dynamic>;
+    final raw = _store[ArgosPacketStorage.storeKey];
+    if (raw == null) return const <dynamic>[];
+    final envelope = jsonDecode(raw) as Map<String, dynamic>;
+    return envelope['records'] as List<dynamic>;
   }
 }
 
@@ -116,7 +118,8 @@ void main() {
       await ArgosPacketStorage.instance.appendRecord(_rec('crash', 2));
       await ArgosPacketStorage.instance.getAllAsync();
 
-      expect(adapter.reads, 1, reason: 'cache serves subsequent ops');
+      expect(adapter.reads, 2,
+          reason: 'new-key lookup and one legacy fallback hydrate once');
     });
 
     test('setAdapter with pre-seeded data hydrates that data', () async {

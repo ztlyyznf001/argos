@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:argos_inspector/apm/argos_base_monitor.dart';
 import 'package:argos_inspector/config/argos_config.dart';
 import 'package:argos_inspector/argos_manager.dart';
@@ -42,7 +43,7 @@ class ArgosResourceMonitor implements ArgosBaseMonitor {
       cpuPercent: null,
       routeName: ArgosManager.instance.currentRoute,
     );
-    ArgosManager.instance.dispatch(info, record: info.toPacketRecord());
+    _dispatch(info);
   }
 
   /// Stops periodic sampling and releases the timer, preventing leaks and
@@ -54,4 +55,10 @@ class ArgosResourceMonitor implements ArgosBaseMonitor {
 
   @override
   void onReport(ArgosBaseModel model) {}
+
+  Future<void> _dispatch(ArgosResourceInfo info) =>
+      ArgosManager.instance.dispatch(info, record: info.toPacketRecord());
+
+  @visibleForTesting
+  Future<void> dispatchForTesting(ArgosResourceInfo info) => _dispatch(info);
 }

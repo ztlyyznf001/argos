@@ -1,3 +1,4 @@
+import 'package:argos_inspector/model/argos_diagnostic_session.dart';
 import 'package:argos_inspector/storage/argos_storage_adapter.dart';
 
 enum ArgosCapability {
@@ -14,6 +15,16 @@ class ArgosConfig {
   final List<ArgosCapability>? apmTypes;
 
   final bool enableStorage;
+
+  /// Automatic mode starts on first init only when storage is enabled.
+  final ArgosSessionMode sessionMode;
+
+  /// Controls whether an automatically created session spans the process or
+  /// rolls at configured adaptive boundaries.
+  final ArgosAutomaticSessionPolicy automaticSessionPolicy;
+
+  /// Maximum number of persisted diagnostic sessions.
+  final int maxSessions;
 
   /// Retention cap applied to each non-resource kind (network / crash / jank)
   /// independently. Note: this is now a per-kind cap, not a total across all
@@ -50,6 +61,9 @@ class ArgosConfig {
     this.hostWhiteList,
     this.apmTypes,
     this.enableStorage = false,
+    this.sessionMode = ArgosSessionMode.automatic,
+    this.automaticSessionPolicy = const ArgosAutomaticSessionPolicy.process(),
+    this.maxSessions = 5,
     this.maxPacketRecords = 200,
     this.resourceMaxRecords = 50,
     this.proxyProvider,
@@ -57,5 +71,10 @@ class ArgosConfig {
     this.jankThresholdMultiplier = 1.0,
     this.resourceSampleInterval = const Duration(seconds: 2),
     this.storagePersistInterval = const Duration(seconds: 5),
-  });
+  })  : assert(maxSessions > 0),
+        assert(maxPacketRecords > 0),
+        assert(resourceMaxRecords > 0),
+        assert(jankThresholdMultiplier > 0),
+        assert(!resourceSampleInterval.isNegative),
+        assert(!storagePersistInterval.isNegative);
 }

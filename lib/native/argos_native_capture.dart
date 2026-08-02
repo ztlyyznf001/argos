@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:argos_inspector/argos_manager.dart';
+import 'package:argos_inspector/config/argos_config.dart';
 import 'package:argos_inspector/model/argos_http_info_model.dart';
-import 'package:argos_inspector/storage/argos_packet_storage.dart';
+import 'package:argos_inspector/model/argos_model.dart';
 
 class ArgosNativeCapture {
   ArgosNativeCapture._internal();
@@ -38,20 +40,22 @@ class ArgosNativeCapture {
     } catch (_) {}
   }
 
-  void _onNativeEvent(dynamic event) {
-    if (!ArgosManager.instance.captureEnabled) return;
-    if (event is! String) return;
+  Future<void> _onNativeEvent(dynamic event) {
+    if (event is! String) return Future<void>.value();
     try {
       final map = jsonDecode(event) as Map<String, dynamic>;
       final record = ArgosPacketRecord.fromJson(map);
-      ArgosPacketStorage.instance.appendRecord(
-        record,
-        maxRecords: ArgosManager.instance.config?.maxPacketRecords ?? 200,
-        resourceMaxRecords:
-            ArgosManager.instance.config?.resourceMaxRecords ?? 50,
+      return ArgosManager.instance.dispatch(
+        _ArgosNativeNetworkInfo(record),
+        record: record,
       );
-    } catch (_) {}
+    } catch (_) {
+      return Future<void>.value();
+    }
   }
+
+  @visibleForTesting
+  Future<void> handleEventForTesting(dynamic event) => _onNativeEvent(event);
 
   Future<void> disable() async {
     if (!_enabled) return;
@@ -62,4 +66,15 @@ class ArgosNativeCapture {
       await _methodChannel.invokeMethod<void>('disable');
     } catch (_) {}
   }
+}
+
+class _ArgosNativeNetworkInfo extends ArgosBaseModel {
+  _ArgosNativeNetworkInfo(this.record) {
+    type = ArgosCapability.network;
+  }
+
+  final ArgosPacketRecord record;
+
+  @override
+  String getValue() => '${record.method} ${record.uri}';
 }

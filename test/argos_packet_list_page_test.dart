@@ -27,6 +27,7 @@ ArgosPacketRecord _rec({
   int responseSize = 0,
   Map<String, String> responseHeaders = const {},
   String route = 'HomePage',
+  String sessionId = 'ui-session',
 }) {
   return ArgosPacketRecord(
     id: '$ts',
@@ -42,6 +43,8 @@ ArgosPacketRecord _rec({
     responseSize: responseSize,
     routeName: route,
     kind: kind,
+    sessionId: sessionId,
+    sequence: ts + 1,
   );
 }
 
@@ -54,13 +57,27 @@ ArgosPacketRecord _resource(int ts, int rss) => _rec(
       responseSize: rss,
     );
 
-Future<void> _seed(List<ArgosPacketRecord> records) async {
+Future<_FakeAdapter> _seed(List<ArgosPacketRecord> records) async {
   final adapter = _FakeAdapter();
+  final sessionIds = records.map((record) => record.sessionId).toSet();
   await adapter.write(
-    'argos_packet_records',
-    jsonEncode(records.map((r) => r.toJson()).toList()),
+    ArgosPacketStorage.storeKey,
+    jsonEncode(<String, dynamic>{
+      'schemaVersion': 1,
+      'sessions': sessionIds
+          .whereType<String>()
+          .map((id) => ArgosDiagnosticSession(
+                id: id,
+                startedAt: 1,
+                endedAt: 2,
+                endReason: ArgosSessionEndReason.completed,
+              ).toJson())
+          .toList(),
+      'records': records.map((record) => record.toJson()).toList(),
+    }),
   );
   ArgosPacketStorage.instance.setAdapter(adapter);
+  return adapter;
 }
 
 Future<void> _pump(WidgetTester tester, {Brightness? brightness}) async {
@@ -68,7 +85,9 @@ Future<void> _pump(WidgetTester tester, {Brightness? brightness}) async {
     MaterialApp(
       theme: brightness == Brightness.dark
           ? ThemeData.dark(useMaterial3: true)
-          : ThemeData.light(useMaterial3: true),
+              .copyWith(splashFactory: NoSplash.splashFactory)
+          : ThemeData.light(useMaterial3: true)
+              .copyWith(splashFactory: NoSplash.splashFactory),
       home: const ArgosPacketListPage(),
     ),
   );
@@ -78,7 +97,10 @@ Future<void> _pump(WidgetTester tester, {Brightness? brightness}) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  tearDown(() => ArgosPacketStorage.instance.setAdapter(null));
+  tearDown(() {
+    ArgosManager.instance.resetForTesting();
+    ArgosPacketStorage.instance.setAdapter(null);
+  });
 
   group('event type filtering', () {
     testWidgets('APM events survive the default filter state', (tester) async {
@@ -212,6 +234,67 @@ void main() {
       expect(tester.takeException(), isNull);
       // Response size is part of the new density; it must survive the theme.
       expect(find.text('2.0 KB'), findsOneWidget);
+    });
+  });
+
+  group('diagnostic session controls', () {
+    testWidgets('capture button pauses and resumes the same session',
+        (tester) async {
+      final adapter = await _seed(<ArgosPacketRecord>[
+        _rec(kind: 'network', ts: 1, uri: 'https://a.com', method: 'GET'),
+      ]);
+      ArgosManager.instance.resetForTesting();
+      ArgosManager.instance.init(
+        config: ArgosConfig(
+          enableStorage: true,
+          sessionMode: ArgosSessionMode.manual,
+          storageAdapter: adapter,
+          storagePersistInterval: Duration.zero,
+          apmTypes: const <ArgosCapability>[],
+        ),
+      );
+      final id = ArgosManager.instance.startSession().id;
+      await _pump(tester);
+
+      expect(find.byTooltip('暂停抓包'), findsOneWidget);
+      await tester.tap(find.byTooltip('暂停抓包'));
+      await tester.pump();
+      expect(ArgosManager.instance.sessionState, ArgosSessionState.paused);
+      expect(ArgosManager.instance.activeSession!.id, id);
+
+      await tester.tap(find.byTooltip('开始抓包'));
+      await tester.pump();
+      expect(ArgosManager.instance.sessionState, ArgosSessionState.recording);
+      expect(ArgosManager.instance.activeSession!.id, id);
+    });
+
+    testWidgets('clear removes records and returns the manager to idle',
+        (tester) async {
+      final adapter = await _seed(<ArgosPacketRecord>[
+        _rec(kind: 'crash', ts: 1, uri: 'boom'),
+      ]);
+      ArgosManager.instance.resetForTesting();
+      ArgosManager.instance.init(
+        config: ArgosConfig(
+          enableStorage: true,
+          sessionMode: ArgosSessionMode.manual,
+          storageAdapter: adapter,
+          storagePersistInterval: Duration.zero,
+          apmTypes: const <ArgosCapability>[],
+        ),
+      );
+      ArgosManager.instance.startSession();
+      await _pump(tester);
+
+      await tester.tap(find.widgetWithText(TextButton, '清空').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, '清空').last);
+      await tester.pumpAndSettle();
+
+      expect(ArgosManager.instance.sessionState, ArgosSessionState.idle);
+      expect(ArgosManager.instance.activeSession, isNull);
+      expect(find.text('暂无记录'), findsOneWidget);
+      expect(find.byTooltip('开始抓包'), findsOneWidget);
     });
   });
 }

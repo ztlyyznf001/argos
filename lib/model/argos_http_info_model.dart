@@ -126,6 +126,12 @@ class ArgosPacketRecord {
   final String? error;
   final String routeName;
 
+  /// Null for records migrated from the pre-session storage format.
+  final String? sessionId;
+
+  /// Stable order within [sessionId]. Legacy records use zero.
+  final int sequence;
+
   /// Event kind: `network` (HTTP packet), `crash`, `jank`, or `resource`.
   /// Used by the Inspector UI to render differentiated list items.
   final String kind;
@@ -145,6 +151,8 @@ class ArgosPacketRecord {
     this.error,
     this.routeName = '',
     this.kind = 'network',
+    this.sessionId,
+    this.sequence = 0,
   });
 
   factory ArgosPacketRecord.fromHttpInfo(ArgosHttpInfo info) {
@@ -168,6 +176,48 @@ class ArgosPacketRecord {
       error: json['error'] as String?,
       routeName: json['routeName'] as String? ?? '',
       kind: json['kind'] as String? ?? 'network',
+      sessionId: json['sessionId']?.toString(),
+      sequence: _castInt(json['sequence']),
+    );
+  }
+
+  ArgosPacketRecord copyWith({
+    String? id,
+    String? uri,
+    String? method,
+    int? startTimestamp,
+    int? endTimestamp,
+    Map<String, String>? requestHeaders,
+    String? requestBody,
+    int? responseCode,
+    String? responseBody,
+    Map<String, String>? responseHeaders,
+    int? responseSize,
+    String? error,
+    bool clearError = false,
+    String? routeName,
+    String? kind,
+    String? sessionId,
+    bool clearSessionId = false,
+    int? sequence,
+  }) {
+    return ArgosPacketRecord(
+      id: id ?? this.id,
+      uri: uri ?? this.uri,
+      method: method ?? this.method,
+      startTimestamp: startTimestamp ?? this.startTimestamp,
+      endTimestamp: endTimestamp ?? this.endTimestamp,
+      requestHeaders: requestHeaders ?? this.requestHeaders,
+      requestBody: requestBody ?? this.requestBody,
+      responseCode: responseCode ?? this.responseCode,
+      responseBody: responseBody ?? this.responseBody,
+      responseHeaders: responseHeaders ?? this.responseHeaders,
+      responseSize: responseSize ?? this.responseSize,
+      error: clearError ? null : error ?? this.error,
+      routeName: routeName ?? this.routeName,
+      kind: kind ?? this.kind,
+      sessionId: clearSessionId ? null : sessionId ?? this.sessionId,
+      sequence: sequence ?? this.sequence,
     );
   }
 
@@ -187,6 +237,8 @@ class ArgosPacketRecord {
       'error': error,
       'routeName': routeName,
       'kind': kind,
+      'sessionId': sessionId,
+      'sequence': sequence,
     };
   }
 
@@ -197,5 +249,11 @@ class ArgosPacketRecord {
       return raw.map((k, v) => MapEntry(k.toString(), v.toString()));
     }
     return {};
+  }
+
+  static int _castInt(dynamic raw) {
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return int.tryParse(raw?.toString() ?? '') ?? 0;
   }
 }

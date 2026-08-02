@@ -1,6 +1,6 @@
 name: argos_inspector
 description: All-seeing Flutter APM and HTTP packet capture plugin — FPS monitoring, native HTTP interception (NSURLProtocol on iOS, OkHttp Interceptor on Android), curl reproduction, and a route-grouped packet inspector UI.
-version: 0.3.1
+version: 0.4.0
 homepage: https://github.com/ztlyyznf001/argos
 repository: https://github.com/ztlyyznf001/argos
 issue_tracker: https://github.com/ztlyyznf001/argos/issues

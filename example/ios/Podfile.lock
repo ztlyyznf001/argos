@@ -1,5 +1,5 @@
 PODS:
-  - argos (0.1.0):
+  - argos_inspector (0.1.0):
     - Flutter
   - Flutter (1.0.0)
   - MMKV (2.4.0):
@@ -9,15 +9,11 @@ PODS:
     - FlutterMacOS
     - MMKV (< 2.5, >= 2.4.0)
   - MMKVCore (2.4.0)
-  - path_provider_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
 
 DEPENDENCIES:
-  - argos (from `.symlinks/plugins/argos/ios`)
+  - argos_inspector (from `.symlinks/plugins/argos_inspector/ios`)
   - Flutter (from `Flutter`)
   - mmkv_ios (from `.symlinks/plugins/mmkv_ios/darwin`)
-  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -25,22 +21,19 @@ SPEC REPOS:
     - MMKVCore
 
 EXTERNAL SOURCES:
-  argos:
-    :path: ".symlinks/plugins/argos/ios"
+  argos_inspector:
+    :path: ".symlinks/plugins/argos_inspector/ios"
   Flutter:
     :path: Flutter
   mmkv_ios:
     :path: ".symlinks/plugins/mmkv_ios/darwin"
-  path_provider_foundation:
-    :path: ".symlinks/plugins/path_provider_foundation/darwin"
 
 SPEC CHECKSUMS:
-  argos: ee8140e802b9b64aaa43d405ba071ef40297c8cf
+  argos_inspector: 24a4ab7097232f277d3fac350e7a11c05a4de16d
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   MMKV: 86859fdfa2b0b21db1fd6e48788474a6416a2c77
   mmkv_ios: 92c9ad54c630cdd783f8711d082710b3dd1ec5ea
   MMKVCore: 3d16ce9f7d411e135020915fde98a056859a1efa
-  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
 
 PODFILE CHECKSUM: 54a5fda1dc2fd94eafbbefe34716d87409149f55
 

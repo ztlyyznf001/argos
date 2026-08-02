@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:argos_inspector/apm/argos_base_monitor.dart';
 import 'package:argos_inspector/config/argos_config.dart';
 import 'package:argos_inspector/argos_manager.dart';
 import 'package:argos_inspector/model/argos_model.dart';
 import 'package:argos_inspector/model/argos_http_info_model.dart';
-import 'package:argos_inspector/storage/argos_packet_storage.dart';
 
 class ArgosHttpMonitor implements ArgosBaseMonitor {
   ArgosConfig? config;
@@ -36,6 +34,10 @@ class ArgosHttpMonitor implements ArgosBaseMonitor {
 
   @override
   void onReport(ArgosBaseModel model) {}
+
+  @visibleForTesting
+  Future<void> dispatchForTesting(ArgosHttpInfo info) =>
+      _dispatchHttpInfo(info);
 }
 
 class ArgosHttpOverrides extends HttpOverrides {
@@ -79,23 +81,16 @@ class ArgosHttpOverrides extends HttpOverrides {
   }
 }
 
-void _dispatchHttpInfo(ArgosHttpInfo? info) {
-  if (info == null || info.recorded) return;
+Future<void> _dispatchHttpInfo(ArgosHttpInfo? info) {
+  if (info == null || info.recorded) return Future<void>.value();
   info.recorded = true;
   final ArgosManager manager = ArgosManager.instance;
-  if (!manager.captureEnabled) return;
-  if (manager.listener != null &&
-      (manager.config?.hostWhiteList?.contains(info.uri?.host) ?? false)) {
-    manager.listener!(info);
+  final hosts = manager.config?.hostWhiteList;
+  final host = info.uri?.host ?? '';
+  if (hosts != null && hosts.isNotEmpty && !hosts.contains(host)) {
+    return Future<void>.value();
   }
-  if (manager.captureEnabled) {
-    ArgosPacketStorage.instance.append(
-      info,
-      maxRecords: manager.config?.maxPacketRecords ?? 200,
-      resourceMaxRecords: manager.config?.resourceMaxRecords ?? 50,
-      routeName: manager.currentRoute,
-    );
-  }
+  return manager.dispatch(info, record: ArgosPacketRecord.fromHttpInfo(info));
 }
 
 class ArgosHttpClient implements HttpClient {
@@ -403,9 +398,15 @@ class ArgosHttpClientRequest implements HttpClientRequest {
   }
 
   Future<HttpClientResponse> monitor(Future<HttpClientResponse> future) async {
-    final HttpClientResponse response = await future;
-
-    return ArgosHttpClientResponse(response, recordResponse);
+    try {
+      final HttpClientResponse response = await future;
+      return ArgosHttpClientResponse(response, recordResponse);
+    } catch (error) {
+      httpInfo?.error = error.toString();
+      httpInfo?.response.updateError();
+      _dispatchHttpInfo(httpInfo);
+      rethrow;
+    }
   }
 
   void recordResponse(int code, String result, HttpHeaders header, int size) {

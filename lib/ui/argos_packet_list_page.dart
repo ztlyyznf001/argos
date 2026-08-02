@@ -103,6 +103,7 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
     if (mounted) {
       setState(() {
         _allRecords = records;
+        _captureEnabled = ArgosManager.instance.captureEnabled;
       });
     }
   }
@@ -126,8 +127,8 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
       ),
     );
     if (confirmed == true) {
-      await ArgosPacketStorage.instance.clear();
-      _load();
+      await ArgosManager.instance.clear();
+      await _load();
     }
   }
 
@@ -183,9 +184,9 @@ class _ArgosPacketListPageState extends State<ArgosPacketListPage> {
             ),
             tooltip: _captureEnabled ? '暂停抓包' : '开始抓包',
             onPressed: () {
+              ArgosManager.instance.captureEnabled = !_captureEnabled;
               setState(() {
-                _captureEnabled = !_captureEnabled;
-                ArgosManager.instance.captureEnabled = _captureEnabled;
+                _captureEnabled = ArgosManager.instance.captureEnabled;
               });
             },
           ),

@@ -1,3 +1,42 @@
+## 0.4.0
+
+### Added
+
+- Added an opt-in on-device Widget Inspector with direct long-press selection,
+  layout highlighting, searchable hierarchy snapshots, node details, refresh,
+  and a floating full-tree launcher.
+- Added opt-in runtime Widget tuning through `ArgosTunable` and
+  `ArgosWidgetTuningController`. Registered numeric and color properties can be
+  edited live and reset; arbitrary colors support hexadecimal/HSVA controls,
+  built-in and host-defined quick picks, and compact tabs for multiple colors
+  such as independent font and background colors.
+- Added automatic/manual diagnostic sessions with explicit
+  `startSession`/`pauseSession`/`resumeSession`/`stopSession` APIs, stable
+  per-session sequence numbers, event metadata, session queries, interrupted
+  recovery, and a default `maxSessions` retention limit of 5.
+- Added the opt-in `ArgosAutomaticSessionPolicy.adaptive` strategy. Automatic
+  sessions can now roll after a configured background timeout, at a maximum
+  duration, or when a cached host context fingerprint changes. New sessions
+  persist `backgroundTimeout`, `maxDuration`, or `contextChanged` end reasons.
+
+### Changed
+
+- Storage now uses the versioned `argos_diagnostic_store_v1` envelope. Existing
+  `argos_packet_records` lists migrate on read, while the legacy key is retained
+  unchanged for rollback; an explicit clear removes both keys.
+- `captureEnabled` now maps to session pause/resume and gates network, native
+  network, crash, jank, and resource events consistently. Crash writes request a
+  best-effort flush without delaying the host error handler.
+- Existing automatic behavior remains source- and behavior-compatible through
+  the default process policy. Manual sessions, explicitly started sessions,
+  routes, short lifecycle transitions, and explicit pause/resume are not
+  implicitly segmented by the adaptive policy.
+
+### Fixed
+
+- Renamed the iOS podspec to `argos_inspector.podspec` so CocoaPods discovery
+  matches the package name introduced in `0.3.1`.
+
 ## 0.3.1
 
 First version published to pub.dev, under the package name **`argos_inspector`** (the name `argos` was rejected by pub.dev as too similar to the existing `argo` package). `0.3.0` was tagged on GitHub under the old `argos` name but never published; `0.3.1` is functionally identical plus the package rename and lint fix below.

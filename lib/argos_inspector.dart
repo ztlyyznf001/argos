@@ -1,6 +1,7 @@
 export 'package:argos_inspector/config/argos_config.dart';
 export 'package:argos_inspector/argos_manager.dart';
 export 'package:argos_inspector/model/argos_model.dart';
+export 'package:argos_inspector/model/argos_diagnostic_session.dart';
 export 'package:argos_inspector/model/argos_fps_info_model.dart';
 export 'package:argos_inspector/model/argos_http_info_model.dart';
 export 'package:argos_inspector/model/argos_crash_info_model.dart';
@@ -16,3 +17,17 @@ export 'package:argos_inspector/ui/argos_packet_list_page.dart';
 export 'package:argos_inspector/ui/argos_packet_detail_page.dart';
 export 'package:argos_inspector/ui/argos_curl_builder.dart';
 export 'package:argos_inspector/ui/argos_ui_kit.dart';
+export 'package:argos_inspector/ui/argos_widget_inspector.dart';
+export 'package:argos_inspector/ui/argos_widget_inspector_page.dart';
+export 'package:argos_inspector/ui/argos_widget_snapshot.dart';
+export 'package:argos_inspector/ui/argos_widget_tuning.dart'
+    show
+        ArgosColorTuningProperty,
+        ArgosDoubleTuningProperty,
+        ArgosTunable,
+        ArgosTunableBuilder,
+        ArgosTuningColorOption,
+        ArgosTuningController,
+        ArgosTuningProperty,
+        ArgosTuningTarget,
+        ArgosTuningValues;

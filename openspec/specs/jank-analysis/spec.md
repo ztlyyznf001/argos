@@ -42,12 +42,16 @@
 - **THEN** 系统输出一个卡顿区间事件，包含丢帧数、区间总耗时与最大单帧耗时，而非每帧一个事件
 
 ### Requirement: 卡顿事件进入统一数据流
-系统 SHALL 将卡顿事件封装为继承 `ArgosBaseModel` 的卡顿模型，`type` 为 `ArgosCapability.jank`，并通过 `ArgosManager.instance.listener` 回调；当 `enableStorage` 为 `true` 时序列化写入 `ArgosPacketStorage`。
+系统 SHALL 将聚合后的卡顿事件封装为 type 为 `ArgosCapability.jank` 的模型与可序列化记录，并交给 `ArgosManager.dispatch`。只有 sessionState 为 recording 时卡顿事件才进入 listener 和可选存储；被接受的记录 SHALL 带有 activeSession.id 与 sequence。
 
-#### Scenario: 卡顿触发 listener 回调
-- **WHEN** 系统生成一个卡顿事件，且 `ArgosManager.instance.listener` 不为 null
-- **THEN** listener 被调用，参数为携带卡顿信息、`type == ArgosCapability.jank` 的卡顿模型
+#### Scenario: recording 时卡顿进入会话
+- **WHEN** recording 会话中生成一个卡顿区间且 listener 不为 null
+- **THEN** listener 收到一次 jank 模型回调，对应记录带有 activeSession.id 和下一 sequence
 
 #### Scenario: 启用存储时卡顿落盘
-- **WHEN** 系统生成一个卡顿事件且 `enableStorage` 为 `true`
-- **THEN** 该卡顿事件以可序列化记录形式写入 `ArgosPacketStorage`
+- **WHEN** recording 会话中生成卡顿区间且 enableStorage 为 true
+- **THEN** 卡顿记录经统一 dispatch 写入所属会话，可按 sessionId 查询
+
+#### Scenario: paused 时卡顿不产生记录
+- **WHEN** sessionState 为 paused 或 idle 时帧回调检测到卡顿
+- **THEN** Argos 不调用 listener、不写入卡顿记录且不消耗 sequence；已有帧订阅可保持安装

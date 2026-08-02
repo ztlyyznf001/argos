@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'argos'
+  s.name             = 'argos_inspector'
   s.version          = '0.1.0'
   s.summary          = 'All-seeing Flutter APM and HTTP packet capture plugin.'
   s.description      = <<-DESC

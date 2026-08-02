@@ -21,15 +21,15 @@
 
 ## 4. Commit and merge
 
-- [ ] 4.1 Commit the version bump, CHANGELOG, and the bundled feature batch on the `release-v0.3.0` branch with a clear release commit message noting any accepted warnings.
-- [ ] 4.2 Merge `release-v0.3.0` to `main` (or fast-forward per maintainer policy).
+- [x] 4.1 Commit the version bump, CHANGELOG, and the bundled feature batch on the `release-v0.3.0` branch with a clear release commit message noting any accepted warnings. → commit `68574c6` (release-relevant files only; tooling dirs left uncommitted per maintainer choice).
+- [x] 4.2 Merge `release-v0.3.0` to `main` (or fast-forward per maintainer policy). → fast-forwarded `main` `46d18a6..68574c6`, pushed to `origin/main`.
 
 ## 5. Mode B — tag and GitHub Release (pub.dev deferred)
 
-- [ ] 5.1 `git tag v0.3.0` on the merged `main` commit and `git push origin v0.3.0`.
-- [ ] 5.2 `gh release create v0.3.0` with title exactly `v0.3.0`; the body is a short pointer to the `CHANGELOG.md` section at the tagged commit (e.g. `https://github.com/ztlyyznf001/argos/blob/v0.3.0/CHANGELOG.md`) and MUST explicitly state that pub.dev publishing is deferred.
-- [ ] 5.3 Confirm the Release body is a pointer, not a duplicated copy of the release notes.
+- [x] 5.1 `git tag v0.3.0` on the merged `main` commit and `git push origin v0.3.0`. → annotated tag pushed (`refs/tags/v0.3.0`).
+- [x] 5.2 `gh release create v0.3.0` with title exactly `v0.3.0`; the body is a short pointer to the `CHANGELOG.md` section at the tagged commit (e.g. `https://github.com/ztlyyznf001/argos/blob/v0.3.0/CHANGELOG.md`) and MUST explicitly state that pub.dev publishing is deferred. → published at https://github.com/ztlyyznf001/argos/releases/tag/v0.3.0
+- [x] 5.3 Confirm the Release body is a pointer, not a duplicated copy of the release notes. → body links to CHANGELOG at the tag; no inline duplication.
 
 ## 6. Record deferred-publish follow-up
 
-- [ ] 6.1 Note (in the change or an issue) that `flutter pub publish` for `0.3.0` is deferred, and that per the release-process Mode B rules the deferred publish MUST re-run verification on the tagged commit and MUST cut a new patch version if `pubspec.yaml`/`lib/` has drifted since `v0.3.0` was tagged.
+- [x] 6.1 Note (in the change or an issue) that `flutter pub publish` for `0.3.0` is deferred, and that per the release-process Mode B rules the deferred publish MUST re-run verification on the tagged commit and MUST cut a new patch version if `pubspec.yaml`/`lib/` has drifted since `v0.3.0` was tagged. → recorded in design.md (Decisions / Open Questions) and stated in the GitHub Release body.

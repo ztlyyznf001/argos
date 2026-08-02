@@ -49,6 +49,8 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData.light(useMaterial3: true)
+              .copyWith(splashFactory: NoSplash.splashFactory),
           home: ArgosPacketDetailPage(record: record),
         ),
       );

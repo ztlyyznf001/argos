@@ -2,7 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:argos_inspector/model/argos_http_info_model.dart';
 import 'package:argos_inspector/ui/argos_ui_kit.dart';
 
-ArgosPacketRecord _resource(int ts, int rssBytes, {int? maxRss}) {
+ArgosPacketRecord _resource(int ts, int rssBytes,
+    {int? maxRss, String? sessionId = 'session-a'}) {
   return ArgosPacketRecord(
     id: '$ts',
     uri: 'RSS',
@@ -19,6 +20,8 @@ ArgosPacketRecord _resource(int ts, int rssBytes, {int? maxRss}) {
     },
     responseSize: rssBytes,
     kind: 'resource',
+    sessionId: sessionId,
+    sequence: ts + 1,
   );
 }
 
@@ -107,6 +110,39 @@ void main() {
       expect(entries, hasLength(3));
       expect(entries[1], isA<ArgosRecordEntry>());
       expect((entries[1] as ArgosRecordEntry).record.kind, 'crash');
+    });
+
+    test('a session change breaks adjacent resource aggregation', () {
+      final records = <ArgosPacketRecord>[
+        ...List.generate(
+          3,
+          (i) => _resource(i, 100, sessionId: 'session-a'),
+        ),
+        ...List.generate(
+          3,
+          (i) => _resource(10 + i, 200, sessionId: 'session-b'),
+        ),
+      ];
+
+      final entries = argosBuildListEntries(records);
+
+      expect(entries, hasLength(2));
+      expect((entries[0] as ArgosResourceRun).count, 3);
+      expect((entries[1] as ArgosResourceRun).count, 3);
+    });
+
+    test('legacy null session samples never merge into a new session', () {
+      final records = <ArgosPacketRecord>[
+        _resource(1, 100, sessionId: null),
+        _resource(2, 200, sessionId: 'session-a'),
+        _resource(3, 300, sessionId: 'session-a'),
+      ];
+
+      final entries = argosBuildListEntries(records);
+
+      expect(entries, hasLength(2));
+      expect(entries.first, isA<ArgosRecordEntry>());
+      expect((entries.last as ArgosResourceRun).count, 2);
     });
 
     test('peak is reported, not the average or the last value', () {

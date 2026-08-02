@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:argos_inspector/apm/argos_base_monitor.dart';
@@ -87,7 +88,7 @@ class ArgosJankMonitor implements ArgosBaseMonitor {
       rasterMs: _rasterMs,
       routeName: ArgosManager.instance.currentRoute,
     );
-    ArgosManager.instance.dispatch(info, record: info.toPacketRecord());
+    _dispatch(info);
 
     _droppedFrames = 0;
     _totalMs = 0;
@@ -98,4 +99,10 @@ class ArgosJankMonitor implements ArgosBaseMonitor {
 
   @override
   void onReport(ArgosBaseModel model) {}
+
+  Future<void> _dispatch(ArgosJankInfo info) =>
+      ArgosManager.instance.dispatch(info, record: info.toPacketRecord());
+
+  @visibleForTesting
+  Future<void> dispatchForTesting(ArgosJankInfo info) => _dispatch(info);
 }

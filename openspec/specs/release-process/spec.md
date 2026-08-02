@@ -61,7 +61,7 @@ Before invoking `flutter pub publish`, the maintainer MUST run, in order, and re
 
 ### Requirement: Publish ordering
 
-The release MAY proceed in one of two modes. In both modes, steps SHALL execute in order with each step completing successfully before the next.
+The release MAY proceed in one of the following modes. In every mode, steps SHALL execute in order with each step completing successfully before the next.
 
 **Mode A — Full publish (pub.dev + GitHub):**
 
@@ -87,6 +87,15 @@ In Mode A the tag MUST NOT be pushed before `flutter pub publish` succeeds, beca
 
 Mode B is appropriate when the maintainer wants the release artifact (tag + GitHub Release) cut immediately but is deferring pub.dev publish (e.g., waiting on credentials, validating with downstream consumers first, or deliberately not publishing to pub.dev for that version).
 
+**Mode C — Automated publish via CI:**
+
+1. Commit the version bump and CHANGELOG update and merge to `main`.
+2. `gh release create v<version>` referencing the CHANGELOG section (MAY be created before or after publish, since in Mode C the tag push — not a manual `flutter pub publish` — is the trigger).
+3. `git tag v<version>` on the merged commit and `git push origin v<version>`.
+4. The automated publishing pipeline (see the **Automated publishing pipeline** requirement) runs on the tag push: it re-runs pre-publish verification on the tagged commit and, only if the gate passes and the tag matches the pubspec version, publishes `<version>` to pub.dev via OIDC.
+
+In Mode C the tag push IS the publish trigger, so pushing `v<version>` before the pipeline is configured, or before the pubspec version matches the tag, will not silently publish the wrong artifact — the pipeline's tag↔version guard and verification gate stop it. The maintainer MUST confirm the pipeline run succeeded and `<version>` is live on pub.dev before considering the release complete.
+
 #### Scenario: Mode A — publish fails, tag not yet pushed
 
 - **WHEN** `flutter pub publish` reports an error in Mode A and the maintainer has not yet pushed the tag
@@ -106,6 +115,16 @@ Mode B is appropriate when the maintainer wants the release artifact (tag + GitH
 
 - **WHEN** the maintainer is ready to run `flutter pub publish` and the working tree contains changes to `pubspec.yaml` or `lib/` since `v<version>` was tagged
 - **THEN** publish MUST NOT use the existing `v<version>` and MUST instead cut a new patch version (e.g., `v<version+1>`) with its own commit, tag, and CHANGELOG entry
+
+#### Scenario: Mode C — tag push triggers an automated publish
+
+- **WHEN** the maintainer pushes a `v<version>` tag whose commit's `pubspec.yaml` declares `version: <version>` and the automated publishing pipeline is configured
+- **THEN** the pipeline SHALL run the pre-publish verification gate and, only on success, publish `<version>` to pub.dev without any manual `flutter pub publish` invocation
+
+#### Scenario: Mode C — pipeline not yet configured
+
+- **WHEN** a `v<version>` tag is pushed but pub.dev automated publishing has not been enabled for the package
+- **THEN** the pipeline's publish step SHALL fail at authentication and MUST NOT publish, and the release is not complete until the maintainer configures automated publishing and re-triggers the pipeline
 
 ### Requirement: GitHub Release body format
 
@@ -130,3 +149,65 @@ Once a version has been published to pub.dev, that exact `version:` value MUST N
 - **WHEN** `pubspec.yaml` declares `version: X.Y.Z` and `X.Y.Z` already exists on pub.dev
 - **THEN** the maintainer MUST bump to the next semver value (patch for fixes, minor for additions) before attempting publish
 
+### Requirement: Rollup releases bundle multiple archived changes
+
+A single release MAY bundle more than one already-archived change into one published version. When a release bundles N archived changes, the version bump SHALL be computed from the union of all bundled changes' public-API and behavioural effects: the release is a minor bump if any bundled change adds public API, and MUST include a `### Breaking` subsection if any bundled change removes or renames a public API entry.
+
+The `## <version>` CHANGELOG section for a rollup release SHALL attribute each bundled change so per-change traceability is preserved — every bundled change MUST be represented by at least one bullet whose content is traceable to that change (for example by grouping bullets under the originating change or naming it inline).
+
+A rollup release SHALL NOT introduce new feature code of its own beyond the version bump and CHANGELOG update; the bundled changes MUST already be implemented before the release is cut.
+
+#### Scenario: Version bump reflects the union of bundled changes
+
+- **WHEN** a release bundles multiple archived changes and at least one of them adds public API while none removes or renames existing public API
+- **THEN** the release SHALL be a minor bump and the CHANGELOG section MUST NOT be forced to include a `### Breaking` subsection
+
+#### Scenario: Any bundled breaking change forces a Breaking subsection
+
+- **WHEN** a rollup release bundles a change that removes or renames a public API entry
+- **THEN** the `## <version>` CHANGELOG section MUST include a `### Breaking` subsection listing each break with a migration note
+
+#### Scenario: Each bundled change is attributed in the CHANGELOG
+
+- **WHEN** a rollup release bundles N archived changes
+- **THEN** the `## <version>` CHANGELOG section MUST contain at least one bullet traceable to each of the N bundled changes
+
+#### Scenario: Rollup release adds no new feature code
+
+- **WHEN** a rollup release is being cut
+- **THEN** the release commit MUST NOT introduce feature code beyond what the bundled changes already implemented, aside from the `pubspec.yaml` version bump and the `CHANGELOG.md` section
+
+
+### Requirement: Automated publishing pipeline
+
+The repository SHALL provide a GitHub Actions workflow that publishes the package to pub.dev automatically when a version tag is pushed, using pub.dev's OIDC-based automated publishing rather than a stored credential.
+
+The workflow SHALL:
+
+- Trigger on pushes of tags matching the version-tag pattern `v[0-9]+.[0-9]+.[0-9]+`, and additionally support manual `workflow_dispatch` against an existing tag.
+- Declare `id-token: write` permission so a short-lived pub.dev publishing token can be exchanged from GitHub's OIDC provider; it MUST NOT rely on a long-lived `PUB_CREDENTIALS` repository secret.
+- Check out the exact tagged commit and, before publishing, assert that `pubspec.yaml` `version:` equals the tag with its leading `v` removed; on mismatch the job MUST fail without publishing.
+- Run the pre-publish verification gate (`flutter analyze`, `dart format --set-exit-if-changed .`, `flutter test`, `flutter pub publish --dry-run`) and MUST NOT reach the publish step if any gate step fails.
+- Pin third-party actions (e.g. the Dart/Flutter setup and publish actions) to specific released versions rather than moving refs.
+
+Enabling automated publishing for the package on pub.dev (repository and allowed tag pattern) is a one-time maintainer action performed in the pub.dev UI and is a prerequisite for the workflow's publish step to authenticate; this SHALL be documented for the maintainer.
+
+#### Scenario: Tag matches pubspec version — publish proceeds
+
+- **WHEN** the workflow runs for a pushed tag `v<version>` and the checked-out `pubspec.yaml` declares `version: <version>` and the verification gate passes
+- **THEN** the workflow SHALL publish `<version>` to pub.dev via the OIDC-exchanged token
+
+#### Scenario: Tag does not match pubspec version — publish blocked
+
+- **WHEN** the workflow runs for a pushed tag `v<version>` but the checked-out `pubspec.yaml` declares a different version
+- **THEN** the job MUST fail at the tag↔version guard and MUST NOT invoke `flutter pub publish`
+
+#### Scenario: Verification gate fails — publish blocked
+
+- **WHEN** any of `flutter analyze`, `dart format --set-exit-if-changed .`, `flutter test`, or `flutter pub publish --dry-run` fails in the workflow
+- **THEN** the job MUST stop before the publish step and MUST NOT publish to pub.dev
+
+#### Scenario: No stored publishing credential
+
+- **WHEN** the automated publishing workflow authenticates to pub.dev
+- **THEN** it SHALL use an OIDC-exchanged short-lived token and MUST NOT read a long-lived `PUB_CREDENTIALS` secret from the repository
