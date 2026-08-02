@@ -34,7 +34,7 @@ build/
 **/Flutter/ephemeral/
 **/Flutter/Generated.xcconfig
 **/Flutter/flutter_export_environment.sh
-**/Runner/GeneratedPluginRegistrant.*
+**/GeneratedPluginRegistrant.*
 example/android/.gradle/
 example/android/local.properties
 example/android/gradlew
